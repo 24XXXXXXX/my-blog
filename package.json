@@ -1,0 +1,15 @@
+{
+  "name": "my-blog",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "hugo && node ./scripts/algolia-index.mjs"
+  },
+  "dependencies": {
+    "algoliasearch": "^4.23.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
