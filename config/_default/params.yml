@@ -75,7 +75,7 @@ excerpt_link: Read More
 # Inject code snippet
 # Make sure your code snippet is safeHTML
 injector:
-  head_begin: # Inject code snippet right after <head>
+  head_begin: '<meta name="algolia-site-verification" content="92AD1D70E990F67D" />' # Algolia domain verification
   head_end: # Inject code snippet right before </head>
   body_begin: # Inject code snippet right after <body>
   body_end: # Inject code snippet right before </body>
@@ -382,9 +382,9 @@ giscus:
 
 algolia_search:
   enable: true
-  appID: "YourAlgoliaAppID"
-  apiKey: "YourAlgoliaSearchOnlyAPIKey"
-  indexName: "your_index_name"
+  appID: "E1OYFOTZVD"
+  apiKey: "25917ee1c2b58ae7936356c3612be43b"
+  indexName: "my-blog"
   hits:
     per_page: 10
 
