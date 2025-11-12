@@ -4,6 +4,9 @@ theme = "reimu"
 languageCode = 'zh-CN'
 defaultContentLanguage = 'zh-CN'
 
+[pagination]
+pagerSize = 10
+
 # 语言配置
 [languages]
 [languages.zh-CN]
