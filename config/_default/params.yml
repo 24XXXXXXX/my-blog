@@ -45,7 +45,6 @@ banner_srcset:
       media: "(max-width: 799px)"
     - src: "images/banner.png"
       media: "(min-width: 800px)"
-
 avatar: "p1.jpg"
 
 # Control the display of the post cover
