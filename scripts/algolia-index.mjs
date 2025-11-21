@@ -1,6 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 import algoliasearch from 'algoliasearch';
+import dotenv from 'dotenv';
+
+// Load .env file
+dotenv.config();
 
 const APP_ID = process.env.ALGOLIA_APP_ID;
 const ADMIN_API_KEY = process.env.ALGOLIA_ADMIN_API_KEY; // Write key (Admin key)

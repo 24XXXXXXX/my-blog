@@ -31,7 +31,7 @@ email: jjx_00001@2925.com
 description: "天行健，君子以自强不息。"
 subtitle: "路漫漫其修远兮，吾将上下而求索。"
 
-banner: "images/banner.webp"
+banner: "images/banner.png"
 # You can also write it in the form of the following url
 # banner: "https://example.com"
 
@@ -39,14 +39,14 @@ banner: "images/banner.webp"
 banner_srcset:
   enable: true
   srcset:
-    - src: "images/banner-600w.webp"
+    - src: "images/banner-600w.png"
       media: "(max-width: 479px)"
-    - src: "images/banner-800w.webp"
+    - src: "images/banner-800w.png"
       media: "(max-width: 799px)"
-    - src: "images/banner.webp"
+    - src: "images/banner.png"
       media: "(min-width: 800px)"
 
-avatar: "photo1.png"
+avatar: "p1.jpg"
 
 # Control the display of the post cover
 # If not set, the banner image will be displayed by default
@@ -75,7 +75,7 @@ excerpt_link: Read More
 # Inject code snippet
 # Make sure your code snippet is safeHTML
 injector:
-  head_begin: '<meta name="algolia-site-verification" content="92AD1D70E990F67D" />' # Algolia domain verification
+  head_begin: '<meta name="algolia-site-verification" content="92AD1D70E990F67D" /> <meta name="algolia-site-verification"  content="5EABE4FBC4C735FB" />' # Algolia domain verification
   head_end: # Inject code snippet right before </head>
   body_begin: # Inject code snippet right after <body>
   body_end: # Inject code snippet right before </body>
