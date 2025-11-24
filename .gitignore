@@ -2,5 +2,4 @@
 .hugo_build.lock
 .env
 node_modules/
-*.mjs
 /快食尚
