@@ -563,7 +563,7 @@ home_categories:
 
 # Experimental, may have a lot of bugs, open with caution!
 pjax:
-  enable: false
+  enable: true
 
 # Experimental
 # https://github.com/GoogleChromeLabs/quicklink
@@ -603,25 +603,25 @@ player:
   # if you enable meting, you must enable aplayer first
   aplayer:
     # https://github.com/DIYgod/APlayer
-    enable: false
+    enable: true
     options:
       audio: []
-      fixed: true
-      autoplay:
-      loop:
-      order:
-      preload:
-      volume:
-      mutex:
-      listFolded:
-      lrcType:
+      fixed: false
+      autoplay: false
+      loop: all
+      order: random
+      preload: auto
+      volume: 0.7
+      mutex: true
+      listFolded: true
+      lrcType: 0
   meting:
     # https://github.com/metowolf/MetingJS
     # if you want to use meting, please enable aplayer first
-    enable: false
-    meting_api: # custom api
+    enable: true
+    meting_api: https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r # custom api
     options:
-      id: 2265921590
+      id: 17679165266
       server: netease
       type: playlist
       auto:
