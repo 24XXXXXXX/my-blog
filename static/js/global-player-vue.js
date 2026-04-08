@@ -1,12 +1,15 @@
 /**
- * Singleton Vue player
- * - logic: one APlayer instance survives PJAX transitions
- * - layout/style: mount above `.sidebar-wrapper` to match theme placement
+ * Singleton APlayer
+ * - one APlayer instance survives PJAX transitions
+ * - no Vue dependency
  */
 (function () {
   'use strict';
 
-  if (window.__REIMU_SINGLETON_PLAYER_BOOTSTRAPPED__) return;
+  if (window.__REIMU_SINGLETON_PLAYER_BOOTSTRAPPED__) {
+    console.log('[SingletonPlayer] 已经初始化过，跳过');
+    return;
+  }
   window.__REIMU_SINGLETON_PLAYER_BOOTSTRAPPED__ = true;
 
   const cfg = window.REIMU_SINGLETON_PLAYER_CONFIG || {};
@@ -33,6 +36,37 @@
     return next;
   }
 
+  function setNavigationGuard(active, meta) {
+    window.__REIMU_SINGLETON_NAVIGATING__ = !!active;
+    window.__REIMU_SINGLETON_NAV_META__ = active ? { ...meta, startedAt: Date.now() } : null;
+  }
+
+  function isNavigationGuardActive() {
+    return !!window.__REIMU_SINGLETON_NAVIGATING__;
+  }
+
+  function rememberPlaybackIntent(player, reason) {
+    if (!player || !player.audio) return false;
+    const wasPlaying = !player.audio.paused;
+    window.__REIMU_PLAYER_WAS_PLAYING__ = wasPlaying;
+    writeState({ paused: !wasPlaying });
+    console.log('[SingletonPlayer] 记录播放意图:', wasPlaying, 'reason:', reason);
+    return wasPlaying;
+  }
+
+  function tryResumeFromIntent(reason) {
+    const player = window.__REIMU_SINGLETON_PLAYER_INSTANCE__;
+    if (!player || !player.audio || !player.audio.paused) return;
+    const state = readState();
+    const shouldResume = window.__REIMU_PLAYER_WAS_PLAYING__ === true || state.paused === false;
+    if (!shouldResume) return;
+    console.log('[SingletonPlayer] 尝试恢复播放, reason:', reason);
+    const playPromise = player.play();
+    if (playPromise && playPromise.catch) {
+      playPromise.catch((error) => console.warn('[SingletonPlayer] play failed:', error));
+    }
+  }
+
   function normalizeUrl(urlText) {
     if (!urlText) return '';
     try {
@@ -49,7 +83,7 @@
     if (!target) return -1;
     for (let i = 0; i < audios.length; i++) {
       const candidate = normalizeUrl(audios[i]?.url || audios[i]?.src || '');
-      if (candidate && candidate === target) return i;
+      if (candidate === target) return i;
     }
     return -1;
   }
@@ -71,9 +105,9 @@
 
     const url = buildMetingUrl();
     if (!url) return [];
-    const resp = await fetch(url, { credentials: 'omit' });
-    if (!resp.ok) throw new Error(`meting api failed: ${resp.status}`);
-    const list = await resp.json();
+    const response = await fetch(url, { credentials: 'omit' });
+    if (!response.ok) throw new Error(`meting api failed: ${response.status}`);
+    const list = await response.json();
     if (!Array.isArray(list)) return [];
     return list.map((item) => ({
       name: item?.name || '',
@@ -86,8 +120,19 @@
 
   function persistPlayerState(player) {
     if (!player || !player.audio) return;
+    const paused = !!player.audio.paused;
+    if (paused && isNavigationGuardActive()) {
+      writeState({
+        currentTime: Number(player.audio.currentTime || 0),
+        currentIndex: Number(player.list?.index || 0),
+        currentSrc: String(player.audio.currentSrc || player.audio.src || ''),
+        volume: Number(player.volume ? player.volume() : cfg?.player?.volume || 0.7),
+      });
+      return;
+    }
+
     writeState({
-      paused: !!player.audio.paused,
+      paused,
       currentTime: Number(player.audio.currentTime || 0),
       currentIndex: Number(player.list?.index || 0),
       currentSrc: String(player.audio.currentSrc || player.audio.src || ''),
@@ -98,22 +143,32 @@
   function bindPersistence(player) {
     if (!player || !player.audio) return;
     let last = 0;
-    const save = () => persistPlayerState(player);
+    let initialized = false;
+    setTimeout(() => { initialized = true; }, 400);
+
+    const save = () => {
+      if (!initialized) return;
+      persistPlayerState(player);
+    };
+
     player.audio.addEventListener('play', save);
     player.audio.addEventListener('pause', save);
     player.audio.addEventListener('seeked', save);
     player.audio.addEventListener('volumechange', save);
     player.audio.addEventListener('timeupdate', () => {
+      if (!initialized) return;
       const now = Date.now();
       if (now - last < 1500) return;
       last = now;
       save();
     });
+
     if (typeof player.on === 'function') {
       player.on('listswitch', save);
     }
-    window.addEventListener('beforeunload', save);
-    window.addEventListener('pagehide', save);
+
+    window.addEventListener('beforeunload', () => persistPlayerState(player));
+    window.addEventListener('pagehide', () => persistPlayerState(player));
   }
 
   function restorePlayerState(player, audios) {
@@ -135,70 +190,68 @@
     } catch {}
 
     const apply = () => {
-      const t = Number(state.currentTime || 0);
-      if (Number.isFinite(t) && t > 0) {
-        try { player.seek(t); } catch {}
+      const currentTime = Number(state.currentTime || 0);
+      if (Number.isFinite(currentTime) && currentTime > 0) {
+        try { player.seek(currentTime); } catch {}
       }
       if (state.paused === false) {
-        try { player.play(); } catch {}
-      } else {
-        try { player.pause(); } catch {}
+        window.__REIMU_PLAYER_WAS_PLAYING__ = true;
+        tryResumeFromIntent('initial-restore');
       }
     };
 
     if (player.audio.readyState >= 2) {
       setTimeout(apply, 60);
-    } else {
-      const timer = setTimeout(apply, 1200);
-      player.audio.addEventListener('canplay', () => {
-        clearTimeout(timer);
-        setTimeout(apply, 60);
-      }, { once: true });
+      return;
     }
+
+    const timer = setTimeout(apply, 1200);
+    player.audio.addEventListener('canplay', () => {
+      clearTimeout(timer);
+      setTimeout(apply, 60);
+    }, { once: true });
   }
 
-  function ensureSingletonContainer() {
+  function ensureHost() {
     let host = document.getElementById('reimu-singleton-player-host');
     if (!host) {
       host = document.createElement('div');
       host.id = 'reimu-singleton-player-host';
-      host.style.minHeight = '0';
       host.style.width = '100%';
+      host.style.minHeight = '0';
     }
     return host;
   }
 
   function ensurePlaceholder() {
-    let el = document.getElementById(placeholderId);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = placeholderId;
-      el.style.width = '100%';
-      el.style.minHeight = '0';
-      el.style.pointerEvents = 'none';
+    let placeholder = document.getElementById(placeholderId);
+    if (!placeholder) {
+      placeholder = document.createElement('div');
+      placeholder.id = placeholderId;
+      placeholder.style.width = '100%';
+      placeholder.style.minHeight = '0';
+      placeholder.style.pointerEvents = 'none';
     }
-    return el;
+    return placeholder;
   }
 
   function removePlaceholder() {
-    const el = document.getElementById(placeholderId);
-    if (el && el.parentNode) el.parentNode.removeChild(el);
+    const placeholder = document.getElementById(placeholderId);
+    if (placeholder && placeholder.parentNode) {
+      placeholder.parentNode.removeChild(placeholder);
+    }
   }
 
   function mountHostToThemePosition() {
-    const selector = String(cfg?.anchor?.selector || '.sidebar-wrapper');
-    const anchor = document.querySelector(selector);
-    if (!anchor) return false;
-    const container = anchor.parentNode;
-    if (!container) return false;
-    const host = ensureSingletonContainer();
+    const anchor = document.querySelector(String(cfg?.anchor?.selector || '.sidebar-wrapper'));
+    if (!anchor || !anchor.parentNode) return false;
+    const host = ensureHost();
     removePlaceholder();
-    if (host.parentNode !== container) {
-      container.insertBefore(host, anchor);
-    } else if (host.nextSibling !== anchor) {
-      container.insertBefore(host, anchor);
+
+    if (host.parentNode !== anchor.parentNode || host.nextSibling !== anchor) {
+      anchor.parentNode.insertBefore(host, anchor);
     }
-    // Back to normal document flow (prevents corner flash after remount).
+
     host.style.position = '';
     host.style.left = '';
     host.style.top = '';
@@ -208,7 +261,7 @@
   }
 
   function detachHostToBody() {
-    const host = ensureSingletonContainer();
+    const host = ensureHost();
     if (host.parentNode === document.body) return;
     const rect = host.getBoundingClientRect();
     const placeholder = ensurePlaceholder();
@@ -216,7 +269,6 @@
     if (host.parentNode) {
       host.parentNode.insertBefore(placeholder, host);
     }
-    // Freeze visual position during transition to avoid jumping.
     host.style.position = 'fixed';
     host.style.left = `${Math.round(rect.left)}px`;
     host.style.top = `${Math.round(rect.top)}px`;
@@ -226,50 +278,111 @@
   }
 
   function cleanupLegacyThemePlayer() {
-    // keep theme layout while removing theme-driven player nodes when singleton mode is enabled
-    document.querySelectorAll('#sidebar meting-js, #sidebar #aplayer').forEach((el) => {
-      if (el.id !== 'reimu-singleton-player-host') el.remove();
+    document.querySelectorAll('#sidebar meting-js, #sidebar #aplayer').forEach((element) => {
+      if (element.id !== 'reimu-singleton-player-host') {
+        element.remove();
+      }
     });
   }
 
-  function bindPjaxRelocation() {
+  function showResumeHint() {
+    const player = window.__REIMU_SINGLETON_PLAYER_INSTANCE__;
+    const state = readState();
+    if (!player || !player.audio || !player.audio.paused || state.paused !== false) return;
+    if (document.getElementById('reimu-player-resume-hint')) return;
+
+    const hint = document.createElement('div');
+    hint.id = 'reimu-player-resume-hint';
+    hint.textContent = '点击页面恢复播放';
+    hint.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:10000;cursor:pointer;transition:opacity 0.3s;';
+    hint.onclick = () => {
+      tryResumeFromIntent('hint-click');
+      hint.remove();
+      setNavigationGuard(false);
+    };
+    document.body.appendChild(hint);
+
+    setTimeout(() => {
+      if (!hint.parentNode) return;
+      hint.style.opacity = '0';
+      setTimeout(() => hint.remove(), 300);
+    }, 5000);
+  }
+
+  function isEventInsidePlayer(event) {
+    const target = event && event.target instanceof Element ? event.target : null;
+    if (!target) return false;
+    return !!target.closest('#reimu-singleton-player-host, .aplayer');
+  }
+
+  function shouldHandleGestureResume() {
+    const player = window.__REIMU_SINGLETON_PLAYER_INSTANCE__;
+    const state = readState();
+    if (!player || !player.audio || !player.audio.paused) return false;
+    if (state.paused !== false && window.__REIMU_PLAYER_WAS_PLAYING__ !== true) return false;
+    return isNavigationGuardActive() || !!document.getElementById('reimu-player-resume-hint');
+  }
+
+  function bindNavigationLifecycle() {
     window.addEventListener('pjax:send', () => {
-      if (window.__REIMU_SINGLETON_PLAYER_INSTANCE__) {
-        persistPlayerState(window.__REIMU_SINGLETON_PLAYER_INSTANCE__);
-      }
+      const player = window.__REIMU_SINGLETON_PLAYER_INSTANCE__;
+      const wasPlaying = rememberPlaybackIntent(player, 'pjax:send');
+      setNavigationGuard(true, { reason: 'pjax:send', wasPlaying });
+      if (player) persistPlayerState(player);
       detachHostToBody();
     });
+
     window.addEventListener('pjax:complete', () => {
-      // sidebar may render async during pjax complete; retry briefly
       let attempts = 0;
       const timer = setInterval(() => {
         attempts += 1;
-        const ok = mountHostToThemePosition();
-        if (ok || attempts >= 20) {
+        if (mountHostToThemePosition() || attempts >= 20) {
           clearInterval(timer);
         }
       }, 50);
       cleanupLegacyThemePlayer();
+      setTimeout(() => {
+        tryResumeFromIntent('pjax:complete');
+        setNavigationGuard(false);
+        showResumeHint();
+      }, 100);
     });
-  }
 
-  function ensureVueLoaded() {
-    if (window.Vue && window.Vue.createApp) return Promise.resolve();
-    const src = String(cfg.vueCdn || 'https://unpkg.com/vue@3.5.17/dist/vue.global.prod.js');
-    return new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[src="${src}"]`);
-      if (existing) {
-        existing.addEventListener('load', () => resolve(), { once: true });
-        existing.addEventListener('error', reject, { once: true });
-        return;
-      }
-      const s = document.createElement('script');
-      s.src = src;
-      s.defer = true;
-      s.onload = () => resolve();
-      s.onerror = reject;
-      document.head.appendChild(s);
+    window.addEventListener('popstate', () => {
+      const player = window.__REIMU_SINGLETON_PLAYER_INSTANCE__;
+      const wasPlaying = rememberPlaybackIntent(player, 'popstate');
+      setNavigationGuard(true, { reason: 'popstate', wasPlaying });
+      if (player) persistPlayerState(player);
     });
+
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      setTimeout(() => {
+        tryResumeFromIntent('pageshow');
+        setNavigationGuard(false);
+        showResumeHint();
+      }, 60);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      setTimeout(() => {
+        tryResumeFromIntent('visibilitychange');
+        showResumeHint();
+      }, 0);
+    });
+
+    const unlockAutoplay = (event) => {
+      if (event?.type === 'click' && isEventInsidePlayer(event)) return;
+      if (!shouldHandleGestureResume()) return;
+      tryResumeFromIntent('user-gesture');
+      setNavigationGuard(false);
+      const hint = document.getElementById('reimu-player-resume-hint');
+      if (hint) hint.remove();
+    };
+
+    document.addEventListener('click', unlockAutoplay);
+    document.addEventListener('keydown', unlockAutoplay);
   }
 
   async function bootstrap() {
@@ -279,61 +392,38 @@
       return;
     }
 
-    await ensureVueLoaded();
-    const { createApp, h, onMounted, ref } = window.Vue;
-
     mountHostToThemePosition();
     cleanupLegacyThemePlayer();
-    bindPjaxRelocation();
+    bindNavigationLifecycle();
 
-    const host = ensureSingletonContainer();
-    const appRoot = document.createElement('div');
-    appRoot.id = 'reimu-singleton-player-app';
-    host.appendChild(appRoot);
+    const host = ensureHost();
+    host.textContent = '';
+    const mountEl = document.createElement('div');
+    mountEl.id = 'reimu-singleton-aplayer';
+    host.appendChild(mountEl);
 
-    const app = createApp({
-      setup() {
-        const ready = ref(false);
-
-        onMounted(async () => {
-          try {
-            const audios = await loadPlaylist();
-            const mountEl = document.createElement('div');
-            mountEl.id = 'reimu-singleton-aplayer';
-            appRoot.appendChild(mountEl);
-
-            const player = new APlayer({
-              container: mountEl,
-              theme: cfg?.player?.theme || 'var(--color-link)',
-              audio: audios,
-              fixed: false,
-              autoplay: false,
-              loop: cfg?.player?.loop || 'all',
-              order: cfg?.player?.order || 'list',
-              preload: cfg?.player?.preload || 'auto',
-              volume: Number(cfg?.player?.volume || 0.7),
-              mutex: cfg?.player?.mutex !== false,
-              listFolded: cfg?.player?.listFolded !== false,
-              lrcType: Number(cfg?.player?.lrcType || 0),
-            });
-
-            window.__REIMU_SINGLETON_PLAYER_INSTANCE__ = player;
-            window.ap = player;
-
-            bindPersistence(player);
-            restorePlayerState(player, audios);
-            ready.value = true;
-          } catch (e) {
-            console.error('[SingletonPlayer] bootstrap failed:', e);
-          }
-        });
-
-        return () => h('div', null, [ready.value ? null : h('div', { style: 'display:none' }, 'loading')]);
-      },
+    const audios = await loadPlaylist();
+    const player = new APlayer({
+      container: mountEl,
+      theme: cfg?.player?.theme || 'var(--color-link)',
+      audio: audios,
+      fixed: false,
+      autoplay: false,
+      loop: cfg?.player?.loop || 'all',
+      order: cfg?.player?.order || 'list',
+      preload: cfg?.player?.preload || 'auto',
+      volume: Number(cfg?.player?.volume || 0.7),
+      mutex: cfg?.player?.mutex !== false,
+      listFolded: cfg?.player?.listFolded !== false,
+      lrcType: Number(cfg?.player?.lrcType || 0),
     });
 
-    app.mount(appRoot);
+    window.__REIMU_SINGLETON_PLAYER_INSTANCE__ = player;
+    window.ap = player;
+
+    bindPersistence(player);
+    restorePlayerState(player, audios);
   }
 
-  bootstrap().catch((e) => console.error('[SingletonPlayer] unexpected error:', e));
+  bootstrap().catch((error) => console.error('[SingletonPlayer] bootstrap failed:', error));
 })();

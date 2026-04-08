@@ -77,7 +77,7 @@ injector:
   head_begin: '<meta name="algolia-site-verification" content="92AD1D70E990F67D" /> <meta name="algolia-site-verification"  content="5EABE4FBC4C735FB" />' # Algolia 域名验证
   head_end: # 在 </head> 前注入代码片段
   body_begin: # 在 <body> 后注入代码片段
-  body_end: '<script src="/js/aplayer-keep-playing.js"></script>' # 在 </body> 前注入代码片段
+  body_end: # 在 </body> 前注入代码片段
   sidebar_begin: # 在 <aside> 后注入代码片段
   sidebar_end: # 在 </aside> 前注入代码片段
 
@@ -602,7 +602,6 @@ player:
   # 单例 Vue 播放器：逻辑独立（不随 PJAX 重建），样式/布局保持主题原样
   singleton_vue:
     enable: true
-    vue_cdn: https://unpkg.com/vue@3.5.17/dist/vue.global.prod.js
     state_key: REIMU_SINGLETON_PLAYER_STATE_V1
     anchor:
       selector: ".sidebar-wrapper"

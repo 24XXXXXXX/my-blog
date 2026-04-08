@@ -358,7 +358,6 @@
     <script>
       window.REIMU_SINGLETON_PLAYER_CONFIG = {
         stateKey: '{{ $params.player.singleton_vue.state_key }}' || 'REIMU_SINGLETON_PLAYER_STATE_V1',
-        vueCdn: '{{ $params.player.singleton_vue.vue_cdn }}' || 'https://unpkg.com/vue@3.5.17/dist/vue.global.prod.js',
         metingApi: '{{ $params.player.meting.meting_api }}',
         meting: {
           id: '{{ $params.player.meting.options.id }}',
@@ -383,7 +382,6 @@
         }
       };
     </script>
-    <script src='{{ $params.player.singleton_vue.vue_cdn }}' defer></script>
     <script src='{{ "js/global-player-vue.js" | relURL }}' defer></script>
   {{- else if not $params.player.meting.enable -}}
     <script>
