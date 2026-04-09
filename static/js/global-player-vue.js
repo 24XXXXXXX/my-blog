@@ -54,6 +54,13 @@
     return wasPlaying;
   }
 
+  function syncPlaybackIntent(player, reason) {
+    if (!player || !player.audio) return;
+    const shouldResume = !player.audio.paused;
+    window.__REIMU_PLAYER_WAS_PLAYING__ = shouldResume;
+    console.log('[SingletonPlayer] 同步播放意图:', shouldResume, 'reason:', reason);
+  }
+
   function tryResumeFromIntent(reason) {
     const player = window.__REIMU_SINGLETON_PLAYER_INSTANCE__;
     if (!player || !player.audio || !player.audio.paused) return;
@@ -121,6 +128,7 @@
   function persistPlayerState(player) {
     if (!player || !player.audio) return;
     const paused = !!player.audio.paused;
+    syncPlaybackIntent(player, 'persist');
     if (paused && isNavigationGuardActive()) {
       writeState({
         currentTime: Number(player.audio.currentTime || 0),
@@ -146,25 +154,26 @@
     let initialized = false;
     setTimeout(() => { initialized = true; }, 400);
 
-    const save = () => {
+    const save = (reason) => {
       if (!initialized) return;
+      syncPlaybackIntent(player, reason || 'event');
       persistPlayerState(player);
     };
 
-    player.audio.addEventListener('play', save);
-    player.audio.addEventListener('pause', save);
-    player.audio.addEventListener('seeked', save);
-    player.audio.addEventListener('volumechange', save);
+    player.audio.addEventListener('play', () => save('play'));
+    player.audio.addEventListener('pause', () => save('pause'));
+    player.audio.addEventListener('seeked', () => save('seeked'));
+    player.audio.addEventListener('volumechange', () => save('volumechange'));
     player.audio.addEventListener('timeupdate', () => {
       if (!initialized) return;
       const now = Date.now();
       if (now - last < 1500) return;
       last = now;
-      save();
+      save('timeupdate');
     });
 
     if (typeof player.on === 'function') {
-      player.on('listswitch', save);
+      player.on('listswitch', () => save('listswitch'));
     }
 
     window.addEventListener('beforeunload', () => persistPlayerState(player));
