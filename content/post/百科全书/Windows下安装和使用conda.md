@@ -4,7 +4,7 @@ description: "详细介绍如何在 Windows 系统中安装 conda，并掌握环
 keywords: "conda,Windows,Miniconda,Anaconda,Miniforge,Python,环境管理,包管理"
 
 date: 2026-04-08T10:00:00+08:00
-lastmod: 2026-04-08T10:00:00+08:00
+lastmod: 2026-04-09T10:00:00+08:00
 
 math: false
 mermaid: false
@@ -458,6 +458,92 @@ conda remove numpy
 conda search numpy
 ```
 
+### 6.6 查询 Python 版本和依赖包版本
+
+查看当前激活环境里的 Python 版本：
+
+```powershell
+python -V
+```
+
+或者：
+
+```powershell
+conda list python
+```
+
+查看某个依赖包当前安装的版本：
+
+```powershell
+conda list numpy
+conda list pandas
+```
+
+如果想查看当前环境中所有已安装包及其版本，可以执行：
+
+```powershell
+conda list
+```
+
+如果你还没激活环境，也可以直接查询指定环境里的包版本：
+
+```powershell
+conda list -n py310 python
+conda list -n py310 numpy
+```
+
+### 6.7 在指定环境中安装 Python 或依赖包
+
+如果环境还没创建，最常见的方式是在创建时直接指定 Python 版本：
+
+```powershell
+conda create -n py311 python=3.11
+```
+
+如果环境已经存在，也可以进入环境后升级或切换 Python 版本：
+
+```powershell
+conda activate py310
+conda install python=3.11
+```
+
+也可以不先激活，直接对指定环境安装包：
+
+```powershell
+conda install -n py310 scipy
+conda install -n py310 python=3.11
+```
+
+这种写法适合脚本化操作，或者你同时维护多个环境时使用。
+
+### 6.8 一次安装多个依赖包
+
+```powershell
+conda install numpy pandas scipy matplotlib
+```
+
+如果你希望尽量减少交互提示，可以加上：
+
+```powershell
+conda install numpy pandas scipy -y
+```
+
+### 6.9 从文件批量安装依赖
+
+如果团队里已经整理好了 `environment.yml`，推荐优先这样安装：
+
+```powershell
+conda env create -f environment.yml
+```
+
+如果只是拿到一个 `requirements.txt`，通常说明对方更偏向 `pip` 工作流，这时一般做法是：
+
+```powershell
+conda create -n demo python=3.11
+conda activate demo
+pip install -r requirements.txt
+```
+
 ---
 
 ## 七、conda 和 pip 应该怎么配合
@@ -507,6 +593,68 @@ pip -V
 ```
 
 如果路径指向当前 conda 环境目录，说明你装的位置基本是对的。
+
+### 7.4 conda 安装依赖和 pip 安装依赖有什么区别
+
+可以先记住一个最实用的结论：
+
+- `conda` 不只是装 Python 包，它还会处理很多底层二进制依赖
+- `pip` 主要安装 Python 包，默认来自 `PyPI`
+
+更具体一点：
+
+- `conda install` 安装的是 conda 仓库里的包，很多科学计算库已经提前编译好
+- `pip install` 安装的是 Python 社区发布到 `PyPI` 的包，生态更大、更新更快
+- `conda` 更擅长处理 `numpy`、`pytorch`、`opencv` 这类可能依赖底层库的包
+- `pip` 更适合安装很多 Web、工具链、插件型库，例如一些最新框架或小众包
+
+### 7.5 什么时候优先用 conda，什么时候优先用 pip
+
+更推荐优先用 `conda` 的场景：
+
+- 你需要安装 Python 本体
+- 你需要切换 Python 版本
+- 你安装的是科学计算、数据分析、机器学习相关包
+- 你希望环境求解尽量稳定
+
+更适合用 `pip` 的场景：
+
+- conda 仓库里没有这个包
+- 你需要安装最新版本的 Python 社区包
+- 项目官方文档明确只提供 `pip install` 用法
+
+### 7.6 一个简单对比
+
+```text
+conda install numpy
+```
+
+通常表示：
+
+- 从 conda channel 获取包
+- 同时考虑 Python 版本、ABI、底层依赖兼容性
+- 更适合环境级依赖管理
+
+```powershell
+pip install numpy
+```
+
+通常表示：
+
+- 从 PyPI 获取包
+- 主要按 Python 包依赖关系安装
+- 某些平台或版本下可能需要额外处理编译问题
+
+### 7.7 混用时的注意事项
+
+- 不要先 `pip install` 一堆核心包，再让 `conda` 回头大规模重算环境
+- 对同一个核心包，尽量不要反复在 `conda` 和 `pip` 之间来回覆盖安装
+- 如果环境已经被混装到很乱，通常新建一个环境比硬修更省时间
+
+一句话概括就是：
+
+- `conda` 更像“环境级包管理”
+- `pip` 更像“Python 生态包安装”
 
 ---
 
@@ -690,6 +838,12 @@ conda env export > environment.yml
 # 查看 conda 版本
 conda --version
 
+# 查看当前 Python 版本
+python -V
+
+# 查看当前环境中 python 包版本
+conda list python
+
 # 查看环境列表
 conda env list
 
@@ -704,6 +858,24 @@ conda deactivate
 
 # 安装包
 conda install numpy
+
+# 在指定环境安装包
+conda install -n py311 pandas
+
+# 安装指定版本
+conda install numpy=1.26
+
+# 安装或切换 Python 版本
+conda install python=3.11
+
+# 查看某个包版本
+conda list numpy
+
+# 查看指定环境里的某个包版本
+conda list -n py311 numpy
+
+# 搜索包
+conda search pytorch
 
 # 删除包
 conda remove numpy
