@@ -7,7 +7,7 @@ type = 'page'
 
 # 关于我
 
-👋 你好！我是 **Jay**，欢迎来到我的个人博客！
+👋 你好！我是 **JJX**，欢迎来到我的个人博客！
 
 ## 关于这个博客
 
@@ -29,7 +29,7 @@ type = 'page'
 
 如果你想和我交流，欢迎通过以下方式联系我：
 
-- 📧 Email: your-email@example.com
-- 🐙 GitHub: [你的GitHub用户名](https://github.com)
+- 📧 Email: admin@jtgkw.cn
+- 🐙 GitHub: https://github.com/24XXXXXXX
 
 感谢你的访问！ 🎉
