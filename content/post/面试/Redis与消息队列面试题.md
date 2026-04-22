@@ -3,8 +3,8 @@ title: "Redis 与消息队列面试题"
 description: "覆盖 Redis 基础、高可用、缓存三大问题以及 MQ 的可靠性、幂等性、顺序性等高频面试题"
 keywords: "面试,Redis,缓存穿透,缓存击穿,缓存雪崩,消息队列,RabbitMQ,Kafka"
 
-date: 2026-04-22T10:16:00+08:00
-lastmod: 2026-04-22T10:16:00+08:00
+date: 2026-04-20T10:16:00+08:00
+lastmod: 2026-04-20T10:16:00+08:00
 
 math: false
 mermaid: false

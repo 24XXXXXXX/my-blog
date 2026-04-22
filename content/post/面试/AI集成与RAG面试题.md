@@ -3,8 +3,8 @@ title: "AI 集成与 RAG 面试题"
 description: "覆盖 LangChain4j、RAG、向量数据库、本地大模型部署与检索优化的面试题整理"
 keywords: "面试,AI,RAG,LangChain4j,Ollama,向量数据库,Embedding"
 
-date: 2026-04-22T10:18:00+08:00
-lastmod: 2026-04-22T10:18:00+08:00
+date: 2026-04-20T10:18:00+08:00
+lastmod: 2026-04-20T10:18:00+08:00
 
 math: false
 mermaid: false

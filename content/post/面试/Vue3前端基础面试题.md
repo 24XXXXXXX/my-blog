@@ -3,8 +3,8 @@ title: "Vue3 前端基础面试题"
 description: "覆盖 Vue3、Composition API、ref、reactive、Vite 与 Axios 拦截器的基础面试题整理"
 keywords: "面试,Vue3,Vite,ref,reactive,Axios"
 
-date: 2026-04-22T10:22:00+08:00
-lastmod: 2026-04-22T10:22:00+08:00
+date: 2026-04-20T10:22:00+08:00
+lastmod: 2026-04-20T10:22:00+08:00
 
 math: false
 mermaid: false

@@ -3,8 +3,8 @@ title: "MySQL 高频面试题"
 description: "覆盖 MySQL 基础 SQL、索引、事务、锁、MVCC 与 EXPLAIN 的高频面试题整理"
 keywords: "面试,MySQL,索引,事务,锁,MVCC,EXPLAIN"
 
-date: 2026-04-22T10:14:00+08:00
-lastmod: 2026-04-22T10:14:00+08:00
+date: 2026-04-20T10:14:00+08:00
+lastmod: 2026-04-20T10:14:00+08:00
 
 math: false
 mermaid: false

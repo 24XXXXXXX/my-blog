@@ -3,8 +3,8 @@ title: "Spring Boot 与 MyBatis 面试题"
 description: "覆盖 Spring Boot 自动配置、IOC、AOP、Bean 生命周期与 MyBatis 核心机制的高频面试题"
 keywords: "面试,Spring Boot,MyBatis,IOC,AOP,自动配置"
 
-date: 2026-04-22T10:12:00+08:00
-lastmod: 2026-04-22T10:12:00+08:00
+date: 2026-04-20T10:12:00+08:00
+lastmod: 2026-04-20T10:12:00+08:00
 
 math: false
 mermaid: false
