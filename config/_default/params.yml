@@ -106,7 +106,7 @@ footer:
 sidebar: left
 
 social:
-  # 邮箱: mailto:xxx@gmail.com
+   邮箱: mailto:admin@jtgkw.cn
   # GitHub: https://github.com/yourname
   # Google: https://plus.google.com/yourname
   # Twitter: https://twitter.com/yourname
@@ -494,9 +494,9 @@ top:
   enable: true
   position: right # left 或 right
   icon:
-    url: "../images/taichi.png" # 该路径相对于 css/main.css，因此需要向上一级到 images 目录
+    url: "../images/jianlai.png" # 该路径相对于 css/main.css，因此需要向上一级到 images 目录
     rotate: true
-    mask: true # 是否将图片作为 mask
+    mask: false # 是否将图片作为 mask
 
 # 是否在文章过期时显示提醒
 outdate:
@@ -521,7 +521,7 @@ moe_icp:
 
 # 赞助
 sponsor:
-  enable: false
+  enable: true
   tip: 
     zh-CN: 请作者喝杯咖啡吧
     zh-TW: 請作者喝杯咖啡吧
@@ -533,8 +533,8 @@ sponsor:
     rotate: true
     mask: true # 是否将图片作为 mask
   qr:
-    # - name: 支付宝
-    #   src: "sponsor/alipay.jpg"
+     - name: 支付宝
+       src: "sponsor/alipay.jpg"
     # - name: 微信
     #   src: "sponsor/wechat.png"
 
@@ -545,8 +545,8 @@ share:
   # - linkedin（LinkedIn）
   # - reddit（Reddit）
   # - weibo（微博）
-  # - qq（QQ）
-  # - weixin（微信）
+   - qq（QQ）
+   - weixin（微信）
 
 # 是否在首页显示分类卡片
 home_categories:
