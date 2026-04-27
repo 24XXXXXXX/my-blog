@@ -1,10 +1,10 @@
 ---
 title: "Hugo 博客接入 Algolia 搜索并部署到 Netlify"
-description: "基于 Hugo + Reimu 主题 + Algolia + Netlify，完整讲清楚本地配置、索引推送、netlify.toml、环境变量和部署流程"
-keywords: "Hugo,Algolia,Netlify,Reimu,搜索,环境变量,netlify.toml"
+description: "基于 Hugo + Reimu 主题 + Algolia + Netlify，完整讲清楚本地配置、索引推送、域名验证、netlify.toml、环境变量和部署流程"
+keywords: "Hugo,Algolia,Netlify,Reimu,搜索,环境变量,netlify.toml,域名验证"
 
 date: 2026-04-08T23:40:00+08:00
-lastmod: 2026-04-08T23:40:00+08:00
+lastmod: 2026-04-24T23:40:00+08:00
 
 math: false
 mermaid: false
@@ -98,6 +98,20 @@ algolia_search:
 ```
 
 这里的 `apiKey` 必须是 `Search-Only Key`，不能填 `Admin API Key`。
+
+除了 `algolia_search` 这段前端搜索配置，如果你在 `Algolia` 后台开启了域名校验，还需要在主题注入区补上验证 `meta` 标签。
+
+当前这个项目里对应的是：
+
+```yaml
+injector:
+  head_begin: '<meta name="algolia-site-verification" content="92AD1D70E990F67D" /> <meta name="algolia-site-verification" content="5EABE4FBC4C735FB" />' # Algolia 域名验证
+```
+
+也就是说，`Algolia 搜索可用` 和 `Algolia 域名验证通过` 不是同一层配置：
+
+- `algolia_search` 决定前端页面怎么连 Algolia
+- `injector.head_begin` 决定站点 `<head>` 里是否带上 Algolia 要求的验证标签
 
 ### 2. 生成搜索索引 JSON
 
@@ -209,6 +223,10 @@ public/index.json
 - 前端页面里只能出现 `Search-Only Key`
 - `.env` 和 Netlify 环境变量里才放 `Admin API Key`
 
+如果你在 Algolia 后台还配置了站点域名验证，那么这一步之外还有一件事要做：
+
+- 把 Algolia 提供的 `meta verification tag` 放进站点 `<head>`
+
 ---
 
 ## 四、在 Hugo 项目里开启 Algolia 搜索
@@ -235,6 +253,49 @@ algolia_search:
 - 不能填 `Admin API Key`
 
 因为这里最终会注入到前端 HTML 中。
+
+### 4.1 如果启用了 Algolia 域名验证，还要补 `head_begin`
+
+仅仅配置 `algolia_search` 还不够。
+
+如果你在 Algolia 后台做了域名校验，还需要把它提供的校验标签放进页面 `<head>`。在 `Reimu` 主题里，最直接的做法就是改：
+
+- [params.yml](C:/Users/JJX/Desktop/my-blog/config/_default/params.yml)
+
+加入：
+
+```yaml
+injector:
+  head_begin: '<meta name="algolia-site-verification" content="92AD1D70E990F67D" /> <meta name="algolia-site-verification" content="5EABE4FBC4C735FB" />' # Algolia 域名验证
+```
+
+这段配置的作用是让主题在 `<head>` 开头插入 Algolia 校验标签。
+
+如果你有多个域名、多个环境，Algolia 后台可能会给你多个 verification code，这时可以像当前项目一样连续放多个 `meta`：
+
+```html
+<meta name="algolia-site-verification" content="92AD1D70E990F67D" />
+<meta name="algolia-site-verification" content="5EABE4FBC4C735FB" />
+```
+
+### 4.2 为什么这一步容易漏
+
+因为很多教程只讲：
+
+- `Application ID`
+- `Search-Only API Key`
+- `Admin API Key`
+- `Index Name`
+
+但没讲 Algolia 后台的域名验证。
+
+于是你可能会出现这种情况：
+
+- 搜索已经能用
+- 索引也能同步
+- 但 Algolia 后台仍然提示你的域名还没验证
+
+这时问题不在 API key，也不在 Netlify，而是站点 `<head>` 里缺少验证标签。
 
 ---
 
