@@ -22,8 +22,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 1.1 腾讯混元3D Global
 
-**官网**：https://3d.hunyuanglobal.com  
-**GitHub**：https://github.com/Tencent-Hunyuan/Hunyuan3D-2
+**官网**：[https://3d.hunyuanglobal.com](https://3d.hunyuanglobal.com)  
+**GitHub**：[https://github.com/Tencent-Hunyuan/Hunyuan3D-2](https://github.com/Tencent-Hunyuan/Hunyuan3D-2)
 
 **核心能力**：
 - 文本/图片/草图生成 3D 模型
@@ -49,8 +49,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 1.2 Tripo
 
-**官网**：https://www.tripo3d.ai  
-**定价页**：https://www.tripo3d.ai/pricing
+**官网**：[https://www.tripo3d.ai](https://www.tripo3d.ai)  
+**定价页**：[https://www.tripo3d.ai/pricing](https://www.tripo3d.ai/pricing)
 
 **核心能力**：
 - 文本/图片到 3D
@@ -76,8 +76,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 1.3 Hyper3D Rodin
 
-**官网**：https://hyper3d.ai  
-**定价页**：https://hyper3d.ai/subscribe
+**官网**：[https://hyper3d.ai](https://hyper3d.ai)  
+**定价页**：[https://hyper3d.ai/subscribe](https://hyper3d.ai/subscribe)
 
 **核心能力**：
 - 图片/文本到高质量 3D
@@ -98,8 +98,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 1.4 CSM AI
 
-**官网**：https://www.csm.ai  
-**定价页**：https://www.csm.ai/pricing
+**官网**：[https://www.csm.ai](https://www.csm.ai)  
+**定价页**：[https://www.csm.ai/pricing](https://www.csm.ai/pricing)
 
 **核心能力**：
 - Image/Text/Chat to 3D
@@ -123,8 +123,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 2.1 Meshy
 
-**官网**：https://www.meshy.ai  
-**定价页**：https://www.meshy.ai/pricing
+**官网**：[https://www.meshy.ai](https://www.meshy.ai)  
+**定价页**：[https://www.meshy.ai/pricing](https://www.meshy.ai/pricing)
 
 **核心能力**：
 - Text/Image to 3D
@@ -150,8 +150,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 2.2 Spline AI
 
-**官网**：https://spline.design  
-**定价页**：https://spline.design/pricing
+**官网**：[https://spline.design](https://spline.design)  
+**定价页**：[https://spline.design/pricing](https://spline.design/pricing)
 
 **核心能力**：
 - AI 生成 3D
@@ -177,8 +177,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 2.3 Sloyd
 
-**官网**：https://www.sloyd.ai  
-**定价页**：https://www.sloyd.ai/pricing
+**官网**：[https://www.sloyd.ai](https://www.sloyd.ai)  
+**定价页**：[https://www.sloyd.ai/pricing](https://www.sloyd.ai/pricing)
 
 **核心能力**：
 - 参数化 3D 生成
@@ -199,8 +199,8 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 2.4 Kaedim
 
-**官网**：https://www.kaedim3d.com  
-**定价页**：https://www.kaedim3d.com/plans
+**官网**：[https://www.kaedim3d.com](https://www.kaedim3d.com)  
+**定价页**：[https://www.kaedim3d.com/plans](https://www.kaedim3d.com/plans)
 
 **核心能力**：
 - 图片到生产级 3D
@@ -220,7 +220,7 @@ description: "全面盘点国内外 AI 3D 建模工具，涵盖腾讯混元3D、
 
 ### 2.5 Luma AI Genie
 
-**官网**：https://lumalabs.ai/genie  
+**官网**：[https://lumalabs.ai/genie](https://lumalabs.ai/genie)  
 
 **核心能力**：
 - 文本到 3D
@@ -433,9 +433,9 @@ Spline（在线编辑 + 交互）
 - Bilibili 搜索："AI 3D 建模教程"
 
 ### 8.3 相关工具
-- **Blender**（免费 3D 软件）：https://www.blender.org/
-- **Unity**（游戏引擎）：https://unity.com/
-- **Unreal Engine**（游戏引擎）：https://www.unrealengine.com/
+- **Blender**（免费 3D 软件）：[https://www.blender.org/](https://www.blender.org/)
+- **Unity**（游戏引擎）：[https://unity.com/](https://unity.com/)
+- **Unreal Engine**（游戏引擎）：[https://www.unrealengine.com/](https://www.unrealengine.com/)
 
 ---
 
@@ -443,15 +443,15 @@ Spline（在线编辑 + 交互）
 
 | 工具 | 官网 | 定价页 | GitHub |
 |------|------|--------|--------|
-| 腾讯混元3D | https://3d.hunyuanglobal.com | - | https://github.com/Tencent-Hunyuan/Hunyuan3D-2 |
-| Tripo | https://www.tripo3d.ai | https://www.tripo3d.ai/pricing | - |
-| Meshy | https://www.meshy.ai | https://www.meshy.ai/pricing | - |
-| Rodin | https://hyper3d.ai | https://hyper3d.ai/subscribe | - |
-| CSM | https://www.csm.ai | https://www.csm.ai/pricing | - |
-| Spline | https://spline.design | https://spline.design/pricing | - |
-| Sloyd | https://www.sloyd.ai | https://www.sloyd.ai/pricing | - |
-| Kaedim | https://www.kaedim3d.com | https://www.kaedim3d.com/plans | - |
-| Luma Genie | https://lumalabs.ai/genie | - | - |
+| 腾讯混元3D | [官网](https://3d.hunyuanglobal.com) | - | [GitHub](https://github.com/Tencent-Hunyuan/Hunyuan3D-2) |
+| Tripo | [官网](https://www.tripo3d.ai) | [定价](https://www.tripo3d.ai/pricing) | - |
+| Meshy | [官网](https://www.meshy.ai) | [定价](https://www.meshy.ai/pricing) | - |
+| Rodin | [官网](https://hyper3d.ai) | [定价](https://hyper3d.ai/subscribe) | - |
+| CSM | [官网](https://www.csm.ai) | [定价](https://www.csm.ai/pricing) | - |
+| Spline | [官网](https://spline.design) | [定价](https://spline.design/pricing) | - |
+| Sloyd | [官网](https://www.sloyd.ai) | [定价](https://www.sloyd.ai/pricing) | - |
+| Kaedim | [官网](https://www.kaedim3d.com) | [定价](https://www.kaedim3d.com/plans) | - |
+| Luma Genie | [官网](https://lumalabs.ai/genie) | - | - |
 
 ---
 
