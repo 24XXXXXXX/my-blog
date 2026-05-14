@@ -61,6 +61,9 @@
         </div>
       </div>
     {{- end -}}
+    {{- if .Site.Params.welcome_popup.enable -}}
+      {{- partial "welcomePopup.html" . -}}
+    {{- end -}}
     {{- partial "afterFooter.html" . -}}
     {{- if .Site.Params.injector.body_end -}}
       {{- .Site.Params.injector.body_end | safeHTML -}}

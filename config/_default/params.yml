@@ -538,6 +538,17 @@ sponsor:
     # - name: 微信
     #   src: "sponsor/wechat.png"
 
+# 首次访问欢迎弹窗
+welcome_popup:
+  enable: true
+  once_key: REIMU_WELCOME_POPUP_DISMISSED_V1
+  delay: 500
+  title: 欢迎咨询
+  button_text: 我知道了
+  content: |-
+    毕设、课设、小程序、网站开发，统统搞定！
+    价格美丽，售后无忧～ ＋v：x193495749
+
 # 分享
 share:
   # - facebook（Facebook）

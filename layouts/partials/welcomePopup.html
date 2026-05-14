@@ -1,0 +1,124 @@
+<div class="welcome-popup popup reimu-popup" role="dialog" aria-modal="true" aria-labelledby="welcome-popup-title">
+  <style>
+    .welcome-popup {
+      top: 14%;
+      width: min(520px, calc(100% - 32px));
+      margin-left: 0;
+      transform: translateX(-50%) scale(0.5);
+      min-height: auto;
+      overflow: hidden;
+    }
+
+    .welcome-popup.show {
+      transform: translateX(-50%) scale(1);
+    }
+
+    .welcome-popup .welcome-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-h2-border);
+      background: var(--color-wrap);
+    }
+
+    .welcome-popup .welcome-popup-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--red-1);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .welcome-popup .welcome-popup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--red-1);
+      box-shadow: var(--shadow-red-6-shadow);
+      flex-shrink: 0;
+    }
+
+    .welcome-popup .welcome-popup-body {
+      padding: 22px 22px 20px;
+      color: var(--grey-8);
+    }
+
+    .welcome-popup .welcome-popup-copy {
+      margin: 0;
+      line-height: 1.9;
+      font-size: 16px;
+      white-space: pre-line;
+    }
+
+    .welcome-popup .welcome-popup-copy strong {
+      color: var(--red-1);
+      font-weight: 700;
+    }
+
+    .welcome-popup .welcome-popup-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 22px 22px;
+    }
+
+    .welcome-popup .welcome-popup-confirm {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: var(--red-1);
+      color: #fff;
+      box-shadow: var(--shadow-red-6-shadow);
+      font-family: inherit;
+      font-size: 14px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .welcome-popup .welcome-popup-confirm:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    @media screen and (max-width: 767px) {
+      .welcome-popup {
+        top: 50%;
+        left: 50%;
+        width: calc(100% - 24px);
+        height: auto;
+        max-height: none;
+        border-radius: 16px;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+
+      .welcome-popup.show {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .welcome-popup .welcome-popup-header {
+        padding: 14px 16px;
+      }
+
+      .welcome-popup .welcome-popup-body {
+        padding: 18px 16px 16px;
+      }
+
+      .welcome-popup .welcome-popup-actions {
+        padding: 0 16px 16px;
+      }
+    }
+  </style>
+  <div class="welcome-popup-header">
+    <div class="welcome-popup-title" id="welcome-popup-title">
+      <span class="welcome-popup-dot"></span>
+      <span>{{ .Site.Params.welcome_popup.title }}</span>
+    </div>
+    <div class="popup-btn-close" aria-label="Close"></div>
+  </div>
+  <div class="welcome-popup-body">
+    <p class="welcome-popup-copy">{{ .Site.Params.welcome_popup.content }}</p>
+  </div>
+  <div class="welcome-popup-actions">
+    <button type="button" class="welcome-popup-confirm">{{ .Site.Params.welcome_popup.button_text }}</button>
+  </div>
+</div>

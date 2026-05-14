@@ -1,5 +1,8 @@
 // from https://blog.naaln.com/2016/07/hexo-with-algolia/
 const algoliaHandler = () => {
+  const searchRoot = _$(".site-search");
+  const searchPopup = searchRoot?.querySelector(".popup") as HTMLElement | null;
+  const searchCloseButton = searchRoot?.querySelector(".popup-btn-close") as HTMLElement | null;
   const algoliaSettings = ALGOLIA_CONFIG.algolia;
   const isAlgoliaSettingsValid =
     algoliaSettings.applicationID &&
@@ -130,7 +133,7 @@ const algoliaHandler = () => {
         return;
       }
       event.preventDefault();
-      ((_$(".popup") as any)?.__closePopup)?.();
+      ((searchPopup as any)?.__closePopup)?.();
       pjax.loadUrl(link.href, {
         triggerElement: link,
       });
@@ -139,11 +142,12 @@ const algoliaHandler = () => {
   _$(".popup-trigger")
     ?.off("click")
     .on("click", (event) => {
+      if (!searchPopup) return;
       event.stopPropagation();
       const scrollWidth = window.innerWidth - document.documentElement.offsetWidth;
       _$("#container")!.style.marginRight = scrollWidth + "px";
       _$("#header-nav")!.style.marginRight = scrollWidth + "px";
-      const popup = _$(".popup");
+      const popup = searchPopup;
       popup.classList.add("show");
       _$("#mask")!.classList.remove("hide");
       document.body.style.overflow = "hidden";
@@ -181,10 +185,10 @@ const algoliaHandler = () => {
       (popup as any).__closePopup = closePopup;
     });
 
-    _$(".popup-btn-close")
+    searchCloseButton
     ?.off("click")
     .on("click", () => {
-      (_$(".popup") as any).__closePopup?.();
+      (searchPopup as any)?.__closePopup?.();
     });
 };
 

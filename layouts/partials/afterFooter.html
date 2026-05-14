@@ -57,6 +57,17 @@
   {{- partial "helpers/ts.html" (dict "source" "js/algolia_search.ts" "ctx" .) -}}
 {{- end -}}
 
+{{- if $params.welcome_popup.enable -}}
+  <script>
+    window.REIMU_WELCOME_POPUP_CONFIG = {
+      onceKey: "{{ $params.welcome_popup.once_key }}",
+      delay: parseInt("{{ $params.welcome_popup.delay }}") || 0,
+      enabled: true
+    };
+  </script>
+  {{- partial "helpers/ts.html" (dict "source" "js/welcome_popup.ts" "ctx" .) -}}
+{{- end -}}
+
 {{- if $params.firework.enable -}}
   {{- partial "helpers/js.html" (dict "raw" $js.firework "src" (index (partial "helpers/vendorCdn.html" (dict "item" $js.firework "ctx" $site)) 0) "integrity" (index (partial "helpers/vendorCdnIntegrity.html" (dict "item" $js.firework)) 0)) -}}
 <script>
