@@ -15,6 +15,7 @@
   const cfg = window.REIMU_SINGLETON_PLAYER_CONFIG || {};
   const stateKey = String(cfg.stateKey || 'REIMU_SINGLETON_PLAYER_STATE_V1');
   const placeholderId = 'reimu-singleton-player-placeholder';
+  const mobileMediaQuery = window.matchMedia('(max-width: 959px)');
 
   function safeParse(text) {
     try { return JSON.parse(text); } catch { return null; }
@@ -244,6 +245,10 @@
     return placeholder;
   }
 
+  function isMobileViewport() {
+    return !!mobileMediaQuery.matches;
+  }
+
   function removePlaceholder() {
     const placeholder = document.getElementById(placeholderId);
     if (placeholder && placeholder.parentNode) {
@@ -267,6 +272,29 @@
     host.style.width = '';
     host.style.zIndex = '';
     return true;
+  }
+
+  function mountHostToBodyForMobile() {
+    const host = ensureHost();
+    removePlaceholder();
+
+    if (host.parentNode !== document.body) {
+      document.body.appendChild(host);
+    }
+
+    host.style.position = '';
+    host.style.left = '';
+    host.style.top = '';
+    host.style.width = '';
+    host.style.zIndex = '';
+    return true;
+  }
+
+  function mountHostForViewport() {
+    if (isMobileViewport()) {
+      return mountHostToBodyForMobile();
+    }
+    return mountHostToThemePosition();
   }
 
   function detachHostToBody() {
@@ -338,14 +366,16 @@
       const wasPlaying = rememberPlaybackIntent(player, 'pjax:send');
       setNavigationGuard(true, { reason: 'pjax:send', wasPlaying });
       if (player) persistPlayerState(player);
-      detachHostToBody();
+      if (!isMobileViewport()) {
+        detachHostToBody();
+      }
     });
 
     window.addEventListener('pjax:complete', () => {
       let attempts = 0;
       const timer = setInterval(() => {
         attempts += 1;
-        if (mountHostToThemePosition() || attempts >= 20) {
+        if (mountHostForViewport() || attempts >= 20) {
           clearInterval(timer);
         }
       }, 50);
@@ -392,16 +422,19 @@
 
     document.addEventListener('click', unlockAutoplay);
     document.addEventListener('keydown', unlockAutoplay);
+    mobileMediaQuery.addEventListener('change', () => {
+      mountHostForViewport();
+    });
   }
 
   async function bootstrap() {
     if (window.__REIMU_SINGLETON_PLAYER_INSTANCE__) {
-      mountHostToThemePosition();
+      mountHostForViewport();
       cleanupLegacyThemePlayer();
       return;
     }
 
-    mountHostToThemePosition();
+    mountHostForViewport();
     cleanupLegacyThemePlayer();
     bindNavigationLifecycle();
 
@@ -416,7 +449,7 @@
       container: mountEl,
       theme: cfg?.player?.theme || 'var(--color-link)',
       audio: audios,
-      fixed: false,
+      fixed: isMobileViewport(),
       autoplay: false,
       loop: cfg?.player?.loop || 'all',
       order: cfg?.player?.order || 'list',
