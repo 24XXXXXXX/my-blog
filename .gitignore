@@ -3,3 +3,5 @@
 .env
 node_modules/
 /快食尚
+.claude/settings.local.json
+.claude/worktrees/
