@@ -7,16 +7,16 @@
 menu:
   - name: home
     url: ""
-    icon: ./images/jianlai.png # 默认使用太极图标，你可以使用 fontawesome 或 icon_font 的十六进制编码，例如 'f0c1'
+    icon:  # 默认使用太极图标，你可以使用 fontawesome 或 icon_font 的十六进制编码，例如 'f0c1'
   - name: archives
     url: "archives"
-    icon: ./images/jianlai.png
+    icon: 
   - name: about
     url: "about"
-    icon: ./images/jianlai.png
+    icon: 
   - name: friend
     url: "friend"
-    icon: ./images/jianlai.png
+    icon: 
 
 mainSections: ["post"]
 # 年，月，日及时间的格式化样式
